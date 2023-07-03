@@ -28,7 +28,7 @@ def knowledge_embedding_store(vs_id, files):
     for file in files:
         filename = os.path.split(file.name)[-1]
         shutil.move(
-            file.name, os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, vs_id, filename)
+            file, os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, vs_id, filename)
         )
         knowledge_embedding_client = KnowledgeEmbedding(
             file_path=os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, vs_id, filename),
