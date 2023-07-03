@@ -2,7 +2,6 @@ import os
 import tempfile
 import unittest
 import requests
-import pandas as pd
 
 class TestAPI(unittest.TestCase):
     def setUp(self):
@@ -19,9 +18,12 @@ class TestAPI(unittest.TestCase):
     # with open(self.test_file_path, 'rb') as f:
     #     files = {'file': f}
     #     data = {'group': self.test_group}
-        message = {'message':self.test_message}
-        group = {'group':self.test_group}
-        response = requests.post(self.app_url, group=group, message=message)
+        # message = {'message':self.test_message}
+        # group = {'group':self.test_group}
+        data = {}
+        data['group'] = self.test_group
+        data['message'] = self.test_message
+        response = requests.post(self.app_url, data=data)
 
         # Check the response status code
         self.assertEqual(response.status_code, 200)

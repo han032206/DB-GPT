@@ -414,9 +414,11 @@ def http_bot_simple(
 @app.route('/api/generate', methods=['POST'])
 def generate():
     # Get the user group and message from the request
-    group = request.form.get('group')
-    message = request.form.get('message')
 
+    data = request.get_json()
+    group = data.get('group')
+    message = data.get('message')
+    
     # 按用户组名字命名数据库
     db_name = 'embedding_' + group
     db_name = save_vs_name(db_name)
