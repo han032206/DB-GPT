@@ -1,16 +1,16 @@
 from flask import Flask, request
 import sys
+import os
+import shutil
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(ROOT_PATH)
 from pilot.configs.config import Config
-import os
 from pilot.configs.model_config import (
     DATASETS_DIR,
     KNOWLEDGE_UPLOAD_ROOT_PATH,
     LOGDIR,
     LLM_MODEL_CONFIG,
 )
-import shutil
 from pilot.source_embedding.knowledge_embedding import KnowledgeEmbedding
 vector_store_name = {"vs_name": ""}
 CFG = Config()
