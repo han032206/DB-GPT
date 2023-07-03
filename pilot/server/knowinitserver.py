@@ -71,7 +71,9 @@ def embedding():
 
     files = []
     for dirpath, dirnames, filenames in os.walk(os.path.join(DATASETS_DIR, db_name)):
-        files.append(os.path.join(dirpath,dirnames,filenames))
+        for filename in filenames:
+            file_path = os.path.join(dirpath, filename)
+            files.append(file_path)
 
 
     db_name = save_vs_name(db_name)
