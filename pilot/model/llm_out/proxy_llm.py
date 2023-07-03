@@ -9,7 +9,7 @@ from pilot.conversation import ROLE_ASSISTANT, ROLE_USER
 CFG = Config()
 
 
-def proxyllm_generate_stream(model, tokenizer, params, device, context_len=2048):
+def proxyllm_generate_stream(model, tokenizer, params, device, context_len=32768):
     history = []
 
     prompt = params["prompt"]
@@ -62,7 +62,7 @@ def proxyllm_generate_stream(model, tokenizer, params, device, context_len=2048)
         history.append(last_user_input)
 
     payloads = {
-        "model": "gpt-3.5-turbo",  # just for test, remove this later
+        "model": "gpt-4-32k",  # just for test, remove this later
         "messages": history,
         "temperature": params.get("temperature"),
         "max_tokens": params.get("max_new_tokens"),
