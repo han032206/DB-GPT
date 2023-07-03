@@ -9,7 +9,7 @@ from pilot.conversation import ROLE_ASSISTANT, ROLE_USER
 CFG = Config()
 
 
-def proxyllm_generate_stream(model, tokenizer, params, device, context_len=32768):
+def proxyllm_generate_stream(model, tokenizer, params, device, context_len=4096):
     history = []
 
     prompt = params["prompt"]
@@ -62,7 +62,7 @@ def proxyllm_generate_stream(model, tokenizer, params, device, context_len=32768
         history.append(last_user_input)
 
     payloads = {
-        "model": "gpt-4-32k",  # just for test, remove this later
+        "model": "gpt-3.5-turbo",  # just for test, remove this later
         "messages": history,
         "temperature": params.get("temperature"),
         "max_tokens": params.get("max_new_tokens"),
@@ -74,6 +74,7 @@ def proxyllm_generate_stream(model, tokenizer, params, device, context_len=32768
     )
 
     text = ""
+    print(res)
     for line in res.iter_lines():
         if line:
             json_data = line.split(b": ", 1)[1]
