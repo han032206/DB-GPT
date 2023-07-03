@@ -76,6 +76,7 @@ def proxyllm_generate_stream(model, tokenizer, params, device, context_len=32768
     text = ""
     for line in res.iter_lines():
         if line:
+            print(line)
             json_data = line.split(b": ", 1)[1]
             decoded_line = json_data.decode("utf-8")
             if decoded_line.lower() != "[DONE]".lower():

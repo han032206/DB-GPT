@@ -663,7 +663,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model-list-mode", type=str, default="once", choices=["once", "reload"]
     )
-    parser.add_argument("--share", default=False, action="store_true")
+    parser.add_argument("--share", default=True, action="store_true")
 
     args = parser.parse_args()
     logger.info(f"args: {args}")
