@@ -45,5 +45,6 @@ class URLEmbedding(SourceEmbedding):
             for tag in soup(["!doctype", "meta"]):
                 tag.extract()
             documents[i].page_content = soup.get_text()
+            documents[i].meta_data = str
             i += 1
         return documents
