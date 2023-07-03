@@ -26,7 +26,7 @@ def knowledge_embedding_store(vs_id, files):
     if not os.path.exists(os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, vs_id)):
         os.makedirs(os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, vs_id))
     for file in files:
-        filename = os.path.split(file.name)[-1]
+        filename = os.path.split(file)[-1]
         shutil.move(
             file, os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, vs_id, filename)
         )
