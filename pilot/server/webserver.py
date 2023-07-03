@@ -9,6 +9,7 @@ import os
 import shutil
 import sys
 import uuid
+from flask import Flask, request, Response
 
 import gradio as gr
 
@@ -50,6 +51,7 @@ from pilot.scene.base import ChatScene
 from pilot.scene.chat_factory import ChatFactory
 from pilot.language.translation_handler import get_lang_text
 
+app = Flask(__name__)
 # 加载插件
 CFG = Config()
 logger = build_logger("webserver", LOGDIR + "webserver.log")
@@ -655,6 +657,37 @@ def signal_handler(sig, frame):
     os._exit(0)
 
 
+# Define the API endpoint
+@app.route('/api/generate', methods=['POST'])
+def generate():
+    # Get the user group and message from the request
+    group = request.form.get('group')
+    message = request.form.get('message')
+
+    # 按用户组名字命名数据库
+    db_name = 'embedding_' + group
+    db_name = save_vs_name(db_name)
+
+    # Get the path to the knowledge base for the user group
+    knowledge_base_path = knowledge_bases.get(group)
+
+    # Check if the knowledge base exists
+    if not knowledge_base_path:
+        return 'Invalid user group'
+
+    # Read the knowledge base file
+    with open(knowledge_base_path, 'r') as f:
+        knowledge_base = f.read()
+
+    # Generate content using a separate thread
+    model_name = 'gpt2'
+    t = threading.Thread(target=generate_content, args=(model_name, message, knowledge_base))
+    t.start()
+
+    # Return the generated content in a streaming way
+    return Response(generate_output(), mimetype='text/event-stream')
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", type=str, default="0.0.0.0")
@@ -693,6 +726,7 @@ if __name__ == "__main__":
     cfg.command_registry = command_registry
 
     logger.info(args)
+    app.run(debug=True)
     demo = build_webdemo()
     demo.queue(
         concurrency_count=args.concurrency_count, status_update_rate=10, api_open=False

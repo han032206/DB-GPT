@@ -1,9 +1,10 @@
 from flask import Flask, request
+import pandas as pd
 import sys
 import os
 import shutil
-# ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append('../../')
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(ROOT_PATH)
 from pilot.configs.config import Config
 from pilot.configs.model_config import (
     DATASETS_DIR,
@@ -54,13 +55,19 @@ def embedding():
     group = request.form.get('group')
     file = request.files['file']
 
+    extension = "." + file.filename.rsplit(".", 1)[-1]
     # 按用户组名字命名数据库
     db_name = 'embedding_' + group
 
     if not os.path.exists(os.path.join(DATASETS_DIR, db_name)):
         os.makedirs(os.path.join(DATASETS_DIR, db_name))
     # save the file to the directory
-    file.save(os.path.join(DATASETS_DIR, db_name, file.filename))
+    if '.xlsx' in extension:
+        output_file = os.path.join(DATASETS_DIR, db_name, file.filename[:-4] + 'csv')
+        df = pd.read_excel(file)
+        df.to_csv(output_file, index=False, encoding='utf-8')
+    else:
+        file.save(os.path.join(DATASETS_DIR, db_name, file.filename))
 
     files = []
     for dirpath, dirnames, filenames in os.walk(os.path.join(DATASETS_DIR, db_name)):
