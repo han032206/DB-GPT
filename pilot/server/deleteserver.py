@@ -67,11 +67,11 @@ def embedding():
     else:
         target_file = os.path.join(DATASETS_DIR, db_name, file.filename)
     
-    if os.path.exists(file_path):
-        os.remove(file_path)
-        print(f"{file_path} has been deleted.")
+    if os.path.exists(target_file):
+        os.remove(target_file)
+        print(f"{target_file} has been deleted.")
     else:
-        print(f"{file_path} does not exist.")
+        print(f"{target_file} does not exist.")
 
 
     files = []
@@ -88,7 +88,7 @@ def embedding():
     # 将处理后的数据插入数据库
 
     # 返回处理后的数据
-    return 'knowledge embedding success'
+    return 'knowledge delete and embedding success'
 
 if __name__ == '__main__':
     app.run(debug=True,port=5050)
