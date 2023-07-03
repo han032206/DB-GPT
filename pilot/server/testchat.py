@@ -10,9 +10,6 @@ class TestAPI(unittest.TestCase):
         self.test_message = '你好！'
         self.test_group = 'test_group'
 
-    def tearDown(self):
-        os.remove(self.test_file_path)
-
     def test_embedding(self):
         # # Create a temporary test file
         # df = pd.DataFrame({'col1': [1, 2, 3], 'col2': ['a', 'b', 'c']})
