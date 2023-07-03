@@ -355,6 +355,60 @@ block_css = (
 )
 
 
+def add_text_simple(state, text):
+    if len(text) <= 0:
+        state.skip_next = True
+        return '请不要输入空消息！'
+
+    """ Default support 4000 tokens, if tokens too lang, we will cut off  """
+    text = text[:4096]
+    state.append_message(state.roles[0], text)
+    state.append_message(state.roles[1], None)
+    state.skip_next = False
+    ### TODO
+    state.last_user_input = text
+    return state
+
+def http_bot_simple(
+    state,
+    temperature,
+    max_new_tokens,
+    knowledge_name
+):
+    # logger.info(
+    #     f"User message send!{state.conv_id},{selected},{plugin_selector},{mode},{sql_mode},{db_selector},{url_input}"
+    # )
+
+
+    chat_param = {
+        "temperature": temperature,
+        "max_new_tokens": max_new_tokens,
+        "user_input": state.last_user_input,
+        "knowledge_name": knowledge_name
+    }
+
+    chat: BaseChat = CHAT_FACTORY.get_implementation('hack_tag', **chat_param)
+    if not chat.prompt_template.stream_out:
+        logger.info("not stream out, wait model response!")
+        state.messages[-1][-1] = chat.nostream_call()
+        yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
+    else:
+        logger.info("stream out start!")
+        try:
+            response = chat.stream_call()
+            for chunk in response.iter_lines(decode_unicode=False, delimiter=b"\0"):
+                if chunk:
+                    state.messages[-1][
+                        -1
+                    ] = chat.prompt_template.output_parser.parse_model_stream_resp_ex(
+                        chunk, chat.skip_echo_len
+                    )
+                    yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
+        except Exception as e:
+            print(traceback.format_exc())
+            state.messages[-1][-1] = "Error:" + str(e)
+            yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
+
 # Define the API endpoint
 @app.route('/api/generate', methods=['POST'])
 def generate():
@@ -366,8 +420,10 @@ def generate():
     db_name = 'embedding_' + group
     db_name = save_vs_name(db_name)
 
+    state = default_conversation.copy()
     # Get the path to the knowledge base for the user group
-    add_text(state,)
+    state = add_text(state,message)
+
 
     # Check if the knowledge base exists
     if not knowledge_base_path:
