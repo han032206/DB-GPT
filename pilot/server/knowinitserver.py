@@ -1,4 +1,7 @@
 from flask import Flask, request
+import sys
+ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(ROOT_PATH)
 from pilot.configs.config import Config
 import os
 from pilot.configs.model_config import (
