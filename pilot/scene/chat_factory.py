@@ -17,6 +17,8 @@ class ChatFactory(metaclass=Singleton):
     def get_implementation(chat_mode, **kwargs):
         chat_classes = BaseChat.__subclasses__()
         implementation = None
+        if chat_mode == 'hack_tag':
+            implementation = ChatNewKnowledge(**kwargs)
         for cls in chat_classes:
             if cls.chat_scene == chat_mode:
                 implementation = cls(**kwargs)

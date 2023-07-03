@@ -383,31 +383,32 @@ def http_bot_simple(
     chat_param = {
         "temperature": temperature,
         "max_new_tokens": max_new_tokens,
+        "chat_session_id": state.conv_id,
         "user_input": state.last_user_input,
         "knowledge_name": knowledge_name
     }
 
     chat: BaseChat = CHAT_FACTORY.get_implementation('hack_tag', **chat_param)
-    if not chat.prompt_template.stream_out:
-        logger.info("not stream out, wait model response!")
-        state.messages[-1][-1] = chat.nostream_call()
-        yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
-    else:
-        logger.info("stream out start!")
-        try:
-            response = chat.stream_call()
-            for chunk in response.iter_lines(decode_unicode=False, delimiter=b"\0"):
-                if chunk:
-                    state.messages[-1][
-                        -1
-                    ] = chat.prompt_template.output_parser.parse_model_stream_resp_ex(
-                        chunk, chat.skip_echo_len
-                    )
-                    yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
-        except Exception as e:
-            print(traceback.format_exc())
-            state.messages[-1][-1] = "Error:" + str(e)
-            yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
+    # if not chat.prompt_template.stream_out:
+    logger.info("not stream out, wait model response!")
+    state.messages[-1][-1] = chat.nostream_call()
+    return state.messages[-1][-1]
+    # else:
+    #     logger.info("stream out start!")
+    #     try:
+    #         response = chat.stream_call()
+    #         for chunk in response.iter_lines(decode_unicode=False, delimiter=b"\0"):
+    #             if chunk:
+    #                 state.messages[-1][
+    #                     -1
+    #                 ] = chat.prompt_template.output_parser.parse_model_stream_resp_ex(
+    #                     chunk, chat.skip_echo_len
+    #                 )
+    #                 yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
+    #     except Exception as e:
+    #         print(traceback.format_exc())
+    #         state.messages[-1][-1] = "Error:" + str(e)
+    #         yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
 
 # Define the API endpoint
 @app.route('/api/generate', methods=['POST'])
@@ -422,24 +423,12 @@ def generate():
 
     state = default_conversation.copy()
     # Get the path to the knowledge base for the user group
-    state = add_text(state,message)
+    state = add_text_simple(state,message)
+    response = http_bot_simple(state,0.7,2048,db_name)
 
-
-    # Check if the knowledge base exists
-    if not knowledge_base_path:
-        return 'Invalid user group'
-
-    # Read the knowledge base file
-    with open(knowledge_base_path, 'r') as f:
-        knowledge_base = f.read()
-
-    # Generate content using a separate thread
-    model_name = 'gpt2'
-    t = threading.Thread(target=generate_content, args=(model_name, message, knowledge_base))
-    t.start()
 
     # Return the generated content in a streaming way
-    return Response(generate_output(), mimetype='text/event-stream')
+    return response
 
 def change_sql_mode(sql_mode):
     if sql_mode in [get_lang_text("sql_generate_mode_direct")]:
@@ -784,7 +773,7 @@ if __name__ == "__main__":
 
     logger.info(args)
     demo = build_webdemo()
-    app.run(debug=True,port=5060)
+    app.run(debug=True,port=5060,host='0.0.0.0')
     demo.queue(
         concurrency_count=args.concurrency_count, status_update_rate=10, api_open=False
     ).launch(
