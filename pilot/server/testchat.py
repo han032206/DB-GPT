@@ -1,12 +1,15 @@
 import unittest
+import requests
 
 class TestAPI(unittest.TestCase):
     def setUp(self):
         self.data = {'group': 'test_group', 'message': '你好！'}
+        self.client = self.app_url = 'http://127.0.0.1:5000/api/embedding'
 
     def test_generate(self):
         # Send a POST request to the API endpoint with a test message and group
-        response = self.client.post('/api/generate', data=self.data)
+        # response = self.client.post('/api/generate', data=self.data)
+        response = requests.post(self.client, group=self.data['group'], message=self.data['message'])
 
         # Check the response status code
         self.assertEqual(response.status_code, 200)
