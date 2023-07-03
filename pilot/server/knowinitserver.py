@@ -4,6 +4,7 @@ import os
 import shutil
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(ROOT_PATH)
+sys.path.append('./')
 from pilot.configs.config import Config
 from pilot.configs.model_config import (
     DATASETS_DIR,
