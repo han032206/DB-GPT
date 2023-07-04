@@ -55,7 +55,7 @@ def embedding():
     group = request.form.get('group')
     file = request.form.get('file_name')
 
-    extension = "." + file.filename.rsplit(".", 1)[-1]
+    extension = "." + file.rsplit(".", 1)[-1]
     # 按用户组名字命名数据库
     db_name = 'embedding_' + group
 
@@ -63,9 +63,9 @@ def embedding():
         os.makedirs(os.path.join(DATASETS_DIR, db_name))
     # save the file to the directory
     if '.xlsx' in extension:
-        target_file = os.path.join(DATASETS_DIR, db_name, file.filename[:-4] + 'csv')
+        target_file = os.path.join(DATASETS_DIR, db_name, file[:-4] + 'csv')
     else:
-        target_file = os.path.join(DATASETS_DIR, db_name, file.filename)
+        target_file = os.path.join(DATASETS_DIR, db_name, file)
     
     if os.path.exists(target_file):
         os.remove(target_file)
