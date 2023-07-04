@@ -59,13 +59,13 @@ def embedding():
     # 按用户组名字命名数据库
     db_name = 'embedding_' + group
 
-    if not os.path.exists(os.path.join(DATASETS_DIR, db_name)):
-        os.makedirs(os.path.join(DATASETS_DIR, db_name))
+    if not os.path.exists(os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, db_name)):
+        os.makedirs(os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, db_name))
     # save the file to the directory
     if '.xlsx' in extension:
-        target_file = os.path.join(DATASETS_DIR, db_name, file[:-4] + 'csv')
+        target_file = os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, db_name, file[:-4] + 'csv')
     else:
-        target_file = os.path.join(DATASETS_DIR, db_name, file)
+        target_file = os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, db_name, file)
     
     if os.path.exists(target_file):
         os.remove(target_file)
@@ -75,7 +75,7 @@ def embedding():
 
 
     files = []
-    for dirpath, dirnames, filenames in os.walk(os.path.join(DATASETS_DIR, db_name)):
+    for dirpath, dirnames, filenames in os.walk(os.path.join(KNOWLEDGE_UPLOAD_ROOT_PATH, db_name)):
         for filename in filenames:
             file_path = os.path.join(dirpath, filename)
             files.append(file_path)
