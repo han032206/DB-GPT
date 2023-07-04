@@ -118,7 +118,7 @@ class Config(metaclass=Singleton):
         self.LOCAL_DB_PATH = os.getenv("LOCAL_DB_PATH", "xx.db")
         self.LOCAL_DB_PORT = int(os.getenv("LOCAL_DB_PORT", 3306))
         self.LOCAL_DB_USER = os.getenv("LOCAL_DB_USER", "root")
-        self.LOCAL_DB_PASSWORD = os.getenv("LOCAL_DB_PASSWORD", "aa123456")
+        self.LOCAL_DB_PASSWORD = os.getenv("LOCAL_DB_PASSWORD", "aa12345678")
 
         ### TODO Adapt to multiple types of libraries
         self.local_db = Database.from_uri(
@@ -157,8 +157,8 @@ class Config(metaclass=Singleton):
 
         ### EMBEDDING Configuration
         self.EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text2vec")
-        self.KNOWLEDGE_CHUNK_SIZE = int(os.getenv("KNOWLEDGE_CHUNK_SIZE", 100))
-        self.KNOWLEDGE_SEARCH_TOP_SIZE = int(os.getenv("KNOWLEDGE_SEARCH_TOP_SIZE", 5))
+        self.KNOWLEDGE_CHUNK_SIZE = int(os.getenv("KNOWLEDGE_CHUNK_SIZE", 1000))
+        self.KNOWLEDGE_SEARCH_TOP_SIZE = int(os.getenv("KNOWLEDGE_SEARCH_TOP_SIZE", 10))
         ### SUMMARY_CONFIG Configuration
         self.SUMMARY_CONFIG = os.getenv("SUMMARY_CONFIG", "FAST")
 
